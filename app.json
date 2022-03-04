@@ -25,9 +25,6 @@
         "backgroundColor": "#FFFFFF"
       },
       "config" : {
-        "googleMaps" : {
-          "apiKey" : "AIzaSyCcMVZvYJ6sSgmeMIjnCo35cYQE4BMPiAg"
-        }
       }
     },
     "web": {
