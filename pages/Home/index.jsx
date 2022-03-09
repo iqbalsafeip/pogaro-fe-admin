@@ -1,167 +1,111 @@
+import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, SafeAreaView, Dimensions, ScrollView, Pressable, Image } from "react-native";
 import EntypoIcon from "react-native-vector-icons/Entypo";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
+import { Ionicons } from '@expo/vector-icons'
+
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height
+
 function Home(props) {
   return (
-    <View style={styles.container}>
-      <View style={styles.rectStack}>
-        <View style={styles.rect}>
-          <View style={styles.rect4Row}>
-            <View style={styles.rect4}></View>
-            <View style={styles.alexRudrigoColumn}>
-              <Text style={styles.alexRudrigo}>Alex Rudrigo</Text>
-              <View style={styles.iconRow}>
-                <EntypoIcon
-                  name="location-pin"
-                  style={styles.icon}
-                ></EntypoIcon>
-                <Text style={styles.cibatuGarut}>Cibatu, Garut</Text>
+    <>
+      <StatusBar />
+      <SafeAreaView>
+        <ScrollView style={{
+          backgroundColor: 'white',
+          width: width,
+          minHeight: height
+        }} >
+          <View style={[{
+            width: '100%',
+            minHeight: 250,
+            backgroundColor: 'pink',
+            borderBottomStartRadius: 25,
+            borderBottomEndRadius: 25
+          }, styles.colCenter]} >
+            <View style={[styles.container, {
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 20,
+              justifyContent: 'space-between'
+            }]}>
+              <Pressable  >
+                <Ionicons name="arrow-back" size={30} color="black" />
+              </Pressable>
+              <Text style={[styles.heading, { color: 'white' }]} >BARON</Text>
+            </View>
+            <View style={[styles.container, {
+              display: 'flex',
+              flexDirection: 'row',
+
+            }]} >
+              <View style={{ height: 150, width: 100, backgroundColor: 'grey', borderRadius: 15 }} >
+
+              </View>
+
+              <View style={[styles.colCenter, { marginLeft: 20 }]}>
+                <Text style={styles.heading} >Alex Rudrigo</Text>
+                <View style={{ flexDirection: 'row' }} >
+                  <Ionicons name="location-outline" size={18} color="black" />
+                  <Text style={{ marginLeft: 5 }} >Garut, Cibatu</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-        <View style={styles.rect3}></View>
-        <View style={styles.rect2}></View>
-        <View style={styles.rect5}>
-          <Text style={styles.jamKerja}>Jam Kerja</Text>
-          <View style={styles.icon2Row}>
-            <FontAwesomeIcon
-              name="clock-o"
-              style={styles.icon2}
-            ></FontAwesomeIcon>
-            <Text style={styles.loremIpsum}>10:00AM - 06:00PM</Text>
+          <View style={[{ width: '95%', height: 140, backgroundColor: 'white', marginTop: 30, borderTopRightRadius: 20, borderBottomEndRadius: 20 }, styles.shadow]} >
+            <View style={[styles.container]} >
+              <View style={[styles.colCenter, { height: '100%' }]} >
+                <Text style={styles.heading} >Jam Kerja</Text>
+                <Text>10:00AM - 06:00PM</Text>
+              </View>
+              <Image source={require('../../assets/img/barber.svg')} style={{width: 60, height: 60, backgroundColor: 'black'}} />
+
+            </View>
           </View>
-        </View>
-      </View>
-    </View>
+          
+          <View style={[styles.container, { marginTop: 20 }]} >
+            <Text style={styles.heading}>
+              Layanan
+            </Text>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-start"
+  container: { width: '90%', alignSelf: 'center' },
+  rowCenter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  rect: {
-    top: 0,
-    left: 0,
-    position: "absolute",
-    backgroundColor: "rgba(100,133,222,1)",
-    right: 68,
-    height: 163,
-    borderBottomLeftRadius: 35
+  colCenter: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start'
   },
-  rect4: {
-    width: 89,
-    height: 117,
-    backgroundColor: "#E6E6E6",
-    borderRadius: 21
+  heading: {
+    fontWeight: 'bold',
+    fontSize: 24,
+
   },
-  alexRudrigo: {
-    fontFamily: "roboto-700",
-    color: "rgba(255,255,255,1)",
-    fontSize: 24
-  },
-  icon: {
-    color: "rgba(255,255,255,1)",
-    fontSize: 27,
-    height: 29,
-    width: 27
-  },
-  cibatuGarut: {
-    fontFamily: "roboto-700",
-    color: "rgba(255,255,255,1)",
-    marginLeft: 1,
-    marginTop: 7
-  },
-  iconRow: {
-    height: 29,
-    flexDirection: "row",
-    marginTop: 15,
-    marginRight: 28
-  },
-  alexRudrigoColumn: {
-    width: 138,
-    marginLeft: 19,
-    marginTop: 19,
-    marginBottom: 26
-  },
-  rect4Row: {
-    height: 117,
-    flexDirection: "row",
-    marginTop: 23,
-    marginLeft: 22,
-    marginRight: 92
-  },
-  rect3: {
-    left: 291,
-    position: "absolute",
-    backgroundColor: "rgba(100,133,222,1)",
-    right: 0,
-    top: 108,
-    bottom: 90
-  },
-  rect2: {
-    top: 163,
-    left: 0,
-    position: "absolute",
-    backgroundColor: "rgba(255,255,255,1)",
-    borderTopRightRadius: 35,
-    bottom: 90,
-    right: 68
-  },
-  rect5: {
-    top: 190,
-    left: 0,
-    height: 117,
-    position: "absolute",
-    backgroundColor: "rgba(255,255,255,1)",
-    borderTopRightRadius: 16,
-    borderBottomRightRadius: 16,
-    shadowColor: "rgba(0,0,0,1)",
+  shadow: {
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 0
+      height: 4,
     },
-    elevation: 30,
-    shadowOpacity: 0.09,
-    shadowRadius: 10,
-    right: 96
-  },
-  jamKerja: {
-    fontFamily: "roboto-700",
-    color: "#121212",
-    fontSize: 24,
-    marginTop: 19,
-    marginLeft: 22
-  },
-  icon2: {
-    color: "rgba(0,0,0,1)",
-    fontSize: 18,
-    height: 18,
-    width: 15
-  },
-  loremIpsum: {
-    fontFamily: "roboto-700",
-    color: "#121212",
-    marginLeft: 10,
-    marginTop: 1
-  },
-  icon2Row: {
-    height: 18,
-    flexDirection: "row",
-    marginTop: 18,
-    marginLeft: 22,
-    marginRight: 157
-  },
-  rectStack: {
-    flex: 1,
-    marginRight: -68,
-    marginTop: 23,
-    marginBottom: 410
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+
+    elevation: 8,
   }
 });
 

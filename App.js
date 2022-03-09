@@ -17,7 +17,7 @@ export default function App() {
         <Stack.Navigator  >
           {
             pages.map((e,i) => (
-              <Stack.Screen key={i} name={e.name} component={e.component} />
+              <Stack.Screen key={i} name={e.name} options={{headerShown: false}} component={e.component} />
             ))
           }
         </Stack.Navigator>
