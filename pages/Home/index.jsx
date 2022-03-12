@@ -1,20 +1,70 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, SafeAreaView, Dimensions, ScrollView, Pressable, Image, TouchableOpacity, Alert, Modal, StatusBar } from "react-native";
-
-
+import React, { useEffect, useState } from "react";
+import { Button, TextInput, StyleSheet, View, Text, SafeAreaView, Dimensions, ScrollView, Pressable, Image, TouchableOpacity, Alert, Modal, StatusBar } from "react-native";
+import DateTime from '@react-native-community/datetimepicker'
+import MapView from "react-native-maps";
 import { Ionicons } from '@expo/vector-icons'
 import CardLayanan from "../../component/CardLayanan";
-
+import * as Location from 'expo-location';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height
 
 function Home(props) {
+
   const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState({
+    tanggal: new Date(),
+    jam: '',
+    _tanggal: ''
+  })
+
+  const [isTanggal, setTgl] = useState(false);
+  const [isJam, setJm] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [isLoading, setLoading] = useState(false);
+
+
+  const handleDateChange = (event, date) => {
+    // setData({ date: date })
+
+    const current = date || data.tanggal
+    setData({ ...data, tanggal: current, _tanggal: new Date(current).toDateString() })
+    setTgl(false)
+  }
+
+  const handleJam = (event, date) => {
+    const current = date || data.tanggal
+    const newDate = new Date(current)
+    setData({ ...data, jam: newDate.getHours() + ":" + newDate.getMinutes() });
+    setJm(false)
+  }
+
+  useEffect(() => {
+    handleLokasi()
+  }, [])
+
+  const handleLokasi = async () => {
+    setLoading(true)
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      Alert.alert('Permission to access location was denied')
+      setLoading(false)
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    console.log(location);
+    setLoading(false)
+
+    setLocation(location);
+  }
+
+
   return (
     <>
       <StatusBar />
       <SafeAreaView>
-        
         <ScrollView style={{
           backgroundColor: 'white',
           width: width,
@@ -56,27 +106,87 @@ function Home(props) {
               </View>
             </View>
           </View>
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={modalVisible}
-              onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={styles.modalText}>Hello World!</Text>
-                  <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => setModalVisible(!modalVisible)}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.heading} >Detail Booking</Text>
+
+                <View style={[styles.colCenter, { justifyContent: 'flex-start', width: '100%', marginVertical: 15 }]} >
+                  <Text>Tanggal : {data._tanggal}</Text>
+                  <Text>Jam : {data.jam}</Text>
+                </View>
+                <View style={[styles.rowCenter, { width: '100%', justifyContent: 'flex-start', marginBottom: 10 }]} >
+                  <Ionicons name="location-outline" size={18} color="black" />
+                  <Text>Lokasi</Text>
+                </View>
+                {
+                  !isLoading && <MapView
+                    style={{ width: '100%', height: 300 }}
+                    initialRegion={{
+                      latitude: location?.coords.latitude,
+                      longitude: location?.coords.longitude,
+                      latitudeDelta: 0.005,
+                      longitudeDelta: 0.005
+                    }}
                   >
-                    <Text style={styles.textStyle}>Hide Modal</Text>
+                    <MapView.Marker
+                      coordinate={location?.coords}
+                      title={'Lokasi Kamu Sekarang'}
+                    />
+                  </MapView>
+                }
+
+                <View style={[styles.rowCenter, { width: '100%', justifyContent: 'flex-start', marginVertical: 10 }]} >
+                  <Ionicons name="location-outline" size={18} color="black" />
+                  <Text>Detail Alamat</Text>
+                </View>
+                <TextInput
+                  multiline={true}
+                  numberOfLines={4}
+                  style={{
+                    borderWidth: 1,
+                    marginHorizontal: 10,
+                    borderRadius: 5,
+                    width: '100%',
+                    padding: 5,
+                  }}
+                  placeholder='Masukan Alamat disini...'
+                />
+                <View style={[styles.rowCenter, { marginTop: 10 }]} >
+                  <Pressable style={[styles.button, styles.buttonOpen]} onPress={() => setTgl(true)} >
+                    <Text style={styles.textStyle} >Pilih Tanggal</Text>
+                  </Pressable>
+                  <Pressable style={[styles.button, styles.buttonOpen, { marginLeft: 5 }]} onPress={() => setJm(true)} >
+                    <Text style={styles.textStyle} >Pilih Jam</Text>
                   </Pressable>
                 </View>
+                <Pressable style={[styles.button, styles.buttonOpen, { marginTop: 5 }]} onPress={handleLokasi} >
+                  <Text style={styles.textStyle} >Gunakan Lokasi Sekarang</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonClose, , { marginTop: 15, width: '100%' }]}
+                  onPress={() => props.navigation.navigate('Detail')}
+                >
+                  <Text style={styles.textStyle}>Booking</Text>
+                </Pressable>
+                {
+                  isTanggal && <DateTime value={new Date()} onChange={handleDateChange} />
+                }
+                {
+                  isJam && <DateTime value={new Date()} onChange={handleJam} mode='time' />
+                }
+
               </View>
-            </Modal>
+            </View>
+          </Modal>
           <View style={[{ width: '95%', height: 140, backgroundColor: 'white', marginTop: 30, borderTopRightRadius: 20, borderBottomEndRadius: 20 }, styles.shadow]} >
             <View style={[styles.container]} >
               <View style={[styles.colCenter, { height: '100%' }]} >
@@ -99,7 +209,7 @@ function Home(props) {
               <Text style={[styles.heading, { color: 'black' }]} >Review</Text>
             </TouchableOpacity>
           </View>
-          
+
         </ScrollView>
       </SafeAreaView>
     </>
@@ -145,7 +255,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 35,
+    padding: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -154,10 +264,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
+    width: width * 0.9
   },
   button: {
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 10,
     elevation: 2
   },

@@ -14,7 +14,7 @@ export default function App() {
   return (
     <Provider store={store} >
       <NavigationContainer>
-        <Stack.Navigator  >
+        <Stack.Navigator initialRouteName='Detail' >
           {
             pages.map((e,i) => (
               <Stack.Screen key={i} name={e.name} options={{headerShown: false}} component={e.component} />
