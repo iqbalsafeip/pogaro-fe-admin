@@ -5,6 +5,7 @@ import MapView from "react-native-maps";
 import { Ionicons } from '@expo/vector-icons'
 import CardLayanan from "../../component/CardLayanan";
 import * as Location from 'expo-location';
+import { Link } from "@react-navigation/native";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height
 
@@ -60,6 +61,10 @@ function Home(props) {
     setLocation(location);
   }
 
+  const handleBooking = () => {
+    props.navigation.navigate('Detail')
+    setModalVisible(false)
+  }
 
   return (
     <>
@@ -99,10 +104,15 @@ function Home(props) {
 
               <View style={[styles.colCenter, { marginLeft: 20 }]}>
                 <Text style={styles.heading} >Alex Rudrigo</Text>
-                <View style={{ flexDirection: 'row' }} >
+                <View style={{ flexDirection: 'row', marginBottom: 5 }} >
                   <Ionicons name="location-outline" size={18} color="black" />
                   <Text style={{ marginLeft: 5 }} >Garut, Cibatu</Text>
                 </View>
+                <Link to="/Reviews"  >
+                  <Ionicons name="star" size={18} color="black" />
+                  <View style={{width: 5}} ></View>
+                  <Text style={{ marginLeft: 5 }} >Lihat Review</Text>
+                </Link>
               </View>
             </View>
           </View>
@@ -173,7 +183,7 @@ function Home(props) {
                 </Pressable>
                 <Pressable
                   style={[styles.button, styles.buttonClose, , { marginTop: 15, width: '100%' }]}
-                  onPress={() => props.navigation.navigate('Detail')}
+                  onPress={handleBooking}
                 >
                   <Text style={styles.textStyle}>Booking</Text>
                 </Pressable>
@@ -196,7 +206,7 @@ function Home(props) {
             </View>
           </View>
 
-          <View style={[styles.container, { marginTop: 20 }]} >
+          <View style={[styles.container, { marginTop: 20, marginBottom: 100 }]} >
             <Text style={styles.heading}>
               Layanan
             </Text>
@@ -205,9 +215,6 @@ function Home(props) {
               <CardLayanan onBook={() => setModalVisible(true)} />
               <CardLayanan onBook={() => setModalVisible(true)} />
             </View>
-            <TouchableOpacity style={[styles.shadow, styles.rowCenter, { width: '100%', height: 60, backgroundColor: '#F9D9A8', marginBottom: 100, borderRadius: 5 }]} >
-              <Text style={[styles.heading, { color: 'black' }]} >Review</Text>
-            </TouchableOpacity>
           </View>
 
         </ScrollView>

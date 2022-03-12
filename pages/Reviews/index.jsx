@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Button, TextInput, StyleSheet, View, Text, SafeAreaView, Dimensions, ScrollView, Pressable, Image, TouchableOpacity, Alert, Modal, StatusBar } from "react-native";
 import DateTime from '@react-native-community/datetimepicker'
 import MapView from "react-native-maps";
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { Ionicons, MaterialIcons, Feather } from '@expo/vector-icons'
 import CardLayanan from "../../component/CardLayanan";
 import * as Location from 'expo-location';
+import CardReview from "../../component/CardReview";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height
 
-function Detail(props) {
+function Reviews(props) {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [data, setData] = useState({
@@ -81,7 +82,7 @@ function Detail(props) {
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }]}>
-                            <Pressable onPress={()=> props.navigation.navigate('Home')} >
+                            <Pressable onPress={() => props.navigation.navigate('Home')} >
                                 <Ionicons name="arrow-back" size={30} color="black" />
                             </Pressable>
                             <Text style={[styles.heading, { color: 'white' }]} >BARON</Text>
@@ -95,74 +96,17 @@ function Detail(props) {
                         paddingVertical: 20
                     }]} >
                         <View style={styles.container} >
-                            <Text style={[styles.heading, { marginTop: 10 }]} >Detail Booking</Text>
+                            <Text style={[styles.heading, { marginTop: 10 }]} >Review Alex Rudrigo</Text>
                         </View>
                     </View>
                     <View style={[styles.container, { marginBottom: 100 }]} >
+                        <CardReview />
+                        <CardReview />
+                        <CardReview />
+                        <CardReview />
+                        <CardReview />
+                        <CardReview />
 
-                        <View style={[styles.colCenter, { justifyContent: 'flex-start', width: '100%', marginVertical: 15 }]} >
-                            <Text>Layanan yang dipesan : </Text>
-                            <Text style={{ fontWeight: 'bold', fontSize: 18 }} >Jasa Cukur</Text>
-                            <Text>Nama Pencukur : </Text>
-                            <Text style={{ fontWeight: 'bold', fontSize: 18 }} >Alex Rudrigo</Text>
-                            <Text>Tanggal Booking : {data._tanggal}</Text>
-                            <Text>Jam Booking : {data.jam}</Text>
-                            <Text>Status : Menunggu Konfirmasi</Text>
-                        </View>
-                        <View style={[styles.rowCenter, { width: '100%', justifyContent: 'flex-start', marginBottom: 10 }]} >
-                            <Ionicons name="location-outline" size={18} color="black" />
-                            <Text>Lokasi</Text>
-                        </View>
-                        {
-                            !isLoading && <MapView
-                                style={{ width: '100%', height: 300 }}
-                                initialRegion={{
-                                    latitude: location?.coords.latitude,
-                                    longitude: location?.coords.longitude,
-                                    latitudeDelta: 0.005,
-                                    longitudeDelta: 0.005
-                                }}
-                            >
-                                <MapView.Marker
-                                    coordinate={location?.coords}
-                                    title={'Lokasi Kamu Sekarang'}
-                                />
-                            </MapView>
-                        }
-
-                        <View style={[styles.rowCenter, { width: '100%', justifyContent: 'flex-start', marginVertical: 10 }]} >
-                            <Ionicons name="location-outline" size={18} color="black" />
-                            <Text>Detail Alamat : </Text>
-                        </View>
-                        <View style={{ marginVertical: 5, padding: 10, backgroundColor: '#c7c7c7', borderRadius: 10 }} >
-                            <Text>
-                                Jl. A Yani No 24
-                            </Text>
-                        </View>
-                        <View style={{ marginVertical: 5, padding: 10, backgroundColor: '#bdd7ff', borderRadius: 10 }} >
-                            <View style={[styles.rowCenter, { width: '100%', justifyContent: 'flex-start', marginVertical: 5 }]} >
-                                <MaterialIcons name="payment" size={18} color="black" />
-                                <Text>Detail Pembayaran : </Text>
-                            </View>
-                            <View style={[styles.colCenter, { justifyContent: 'flex-start', width: '100%', marginVertical: 15 }]} >
-                                <Text>Layanan yang dipesan : </Text>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18 }} >Jasa Cukur</Text>
-                                <Text>Harga Jasa : </Text>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18 }} >Rp. 20.000</Text>
-                                <Text>Ongkos Transportasi Rp. 2000 /km : </Text>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18 }} >Rp. 8.000</Text>
-                                <Text>Total Bayar : </Text>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18 }} >Rp. 28.000</Text>
-                            </View>
-                        </View>
-                        <Pressable style={[styles.button, styles.buttonDanger, { marginTop: 15 }]} onPress={handleLokasi} >
-                            <Text style={styles.textStyle} >Batalkan</Text>
-                        </Pressable>
-                        <Pressable
-                            style={[styles.button, styles.buttonClose, , { marginTop: 15, width: '100%' }]}
-                        >
-                            <Text style={styles.textStyle}>Tandai Selesai</Text>
-                        </Pressable>
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -247,4 +191,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Detail;
+export default Reviews;
