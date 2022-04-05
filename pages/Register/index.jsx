@@ -1,0 +1,169 @@
+import React, {useState, useEffect} from 'react';
+import {View, Text, Button, TouchableOpacity} from 'react-native';
+import {AuthLayout, FormInput} from '../../component';
+
+import colors from '../../constants';
+import {CrossIcon, CorrectIcon, EyeIcon, EyeCloseIcon} from '../../assets';
+
+const Register = ({navigation}) => {
+  const [isFocus, setIsFocus] = useState({
+    password: false,
+    email: false,
+    username: false,
+  });
+
+  const [passwordMessage, setPasswordMessage] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [usernameMessage, setUsernameMessage] = useState('');
+  const [input, setInput] = useState({
+    email: '',
+    username: '',
+    password: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleChange = (name, value) => {
+    setInput({
+      ...input,
+      [name]: value,
+    });
+  };
+
+  function isValidEmail(value) {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(value).toLowerCase());
+  }
+
+  const onFocus = (name, value) => {
+    setIsFocus({
+      ...isFocus,
+      [name]: value,
+    });
+  };
+
+  const onBlur = (name, value) => {
+    setIsFocus({
+      ...isFocus,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (isFocus.password) {
+      if (input.password.length >= 9) {
+        setPasswordMessage('');
+      } else {
+        setPasswordMessage('password must be 9 characters');
+      }
+    } else {
+      setPasswordMessage('');
+    }
+
+    if (isFocus.email) {
+      const cek = isValidEmail(input.email);
+      if (cek) {
+        setEmailMessage('');
+      } else {
+        setEmailMessage('Invalid Email');
+      }
+    } else {
+      const cek = isValidEmail(input.email);
+      if (cek) {
+        setEmailMessage('');
+      } else {
+        setEmailMessage('Invalid Email');
+      }
+    }
+
+    if (isFocus.username) {
+      if (input.username.length >= 9) {
+        setUsernameMessage('');
+      } else {
+        setUsernameMessage('Username must be 9 characters');
+      }
+    } else {
+      setUsernameMessage('');
+    }
+  }, [isFocus, input]);
+
+  return (
+    <AuthLayout
+      navigation={navigation}
+      title="Getting Started"
+      subTitle="Create an account to continue">
+      <View>
+        <FormInput
+          value={input.email}
+          onChange={value => handleChange('email', value)}
+          onFocus={() => onFocus('email', true)}
+          onBlur={() => onBlur('email', false)}
+          label="Email"
+          errorMessage={emailMessage.length > 0 ? emailMessage : ''}
+          icon={emailMessage.length > 0 ? CrossIcon : CorrectIcon}
+          placeholder="Email Address"></FormInput>
+        <FormInput
+          value={input.username}
+          onChange={value => handleChange('username', value)}
+          onFocus={() => onFocus('username', true)}
+          onBlur={() => onBlur('username', false)}
+          errorMessage={usernameMessage.length > 0 ? usernameMessage : ''}
+          icon={usernameMessage.length > 0 ? CrossIcon : CorrectIcon}
+          label="Username"
+          placeholder="Username"></FormInput>
+        <FormInput
+          value={input.password}
+          onChange={value => handleChange('password', value)}
+          errorMessage={passwordMessage.length > 0 ? passwordMessage : ''}
+          onFocus={() => onFocus('password', true)}
+          onBlur={() => onBlur('password', false)}
+          label="Password"
+          icon={showPassword ? EyeCloseIcon : EyeIcon}
+          onPressIcon={() => setShowPassword(!showPassword)}
+          showPasswordState={showPassword}
+          passwordInput
+          placeholder="Password"></FormInput>
+      </View>
+
+      <View style={{marginVertical: 10}}>
+        <Button
+          onPress={() => navigation.replace('Otp')}
+          color={colors.greenPrimary}
+          disabled={
+            emailMessage.length > 0 ||
+            passwordMessage.length > 0 ||
+            usernameMessage.length > 0 ||
+            input.email.length < 1 ||
+            input.password.length < 1 ||
+            input.username.length < 1
+          }
+          title="Sign Up"></Button>
+      </View>
+      <TouchableOpacity
+        onPress={() => navigation.replace('Login')}
+        style={{
+          marginVertical: 5,
+          justifyContent: 'center',
+          flexDirection: 'row',
+        }}>
+        <Text
+          style={{
+            fontSize: 15,
+            color: colors.border,
+            marginRight: 5,
+          }}>
+          Already have an account?
+        </Text>
+        <Text
+          style={{
+            fontSize: 15,
+            color: colors.greenPrimary,
+          }}>
+          Sign In
+        </Text>
+      </TouchableOpacity>
+    </AuthLayout>
+  );
+};
+
+export default Register;

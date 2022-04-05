@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, TextInput, StyleSheet, View, Text, SafeAreaView, Dimensions, ScrollView, Pressable, Image, TouchableOpacity, Alert, Modal, StatusBar } from "react-native";
+import { Button, TextInput, StyleSheet, View, Text, SafeAreaView, Dimensions, ScrollView, Pressable, Image, TouchableOpacity, Alert, Modal, StatusBar, Linking } from "react-native";
 import DateTime from '@react-native-community/datetimepicker'
 import MapView from "react-native-maps";
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
@@ -155,7 +155,10 @@ function Detail(props) {
                                 <Text style={{ fontWeight: 'bold', fontSize: 18 }} >Rp. 28.000</Text>
                             </View>
                         </View>
-                        <Pressable style={[styles.button, styles.buttonDanger, { marginTop: 15 }]} onPress={handleLokasi} >
+                        <Pressable style={[styles.button, styles.buttonPrimary, { marginTop: 15 }]} onPress={()=> Linking.openURL("https://wa.me/62895801066893")} >
+                            <Text style={styles.textStyle} >Hubungi Pencukur</Text>
+                        </Pressable>
+                        <Pressable style={[styles.button, styles.buttonDanger, { marginTop: 15 }]}  >
                             <Text style={styles.textStyle} >Batalkan</Text>
                         </Pressable>
                         <Pressable
@@ -234,6 +237,9 @@ const styles = StyleSheet.create({
     },
     buttonDanger: {
         backgroundColor: "#fc034e",
+    },
+    buttonPrimary: {
+        backgroundColor : "#5280ff"
     },
 
     textStyle: {

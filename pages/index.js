@@ -1,5 +1,7 @@
 import Detail from './Detail';
 import Home from './Home';
+import Login from './Login';
+import Register from './Register';
 import Reviews from './Reviews';
 
 const pages = [
@@ -14,6 +16,14 @@ const pages = [
     {
         name : 'Reviews',
         component: Reviews
+    },
+    {
+        name : 'Login',
+        component : Login
+    },
+    {
+        name : 'Register',
+        component : Register
     }
 ]
 

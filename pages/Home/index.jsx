@@ -88,7 +88,7 @@ function Home(props) {
               marginBottom: 20,
               justifyContent: 'space-between'
             }]}>
-              <Pressable  >
+              <Pressable onPress={()=> props.navigation.navigate('Login')} >
                 <Ionicons name="arrow-back" size={30} color="black" />
               </Pressable>
               <Text style={[styles.heading, { color: 'white' }]} >BARON</Text>
@@ -171,14 +171,14 @@ function Home(props) {
                   placeholder='Masukan Alamat disini...'
                 />
                 <View style={[styles.rowCenter, { marginTop: 10 }]} >
-                  <Pressable style={[styles.button, styles.buttonOpen]} onPress={() => setTgl(true)} >
+                  <Pressable style={[styles.button, styles.buttonOpen, {width: '48%'}]} onPress={() => setTgl(true)} >
                     <Text style={styles.textStyle} >Pilih Tanggal</Text>
                   </Pressable>
-                  <Pressable style={[styles.button, styles.buttonOpen, { marginLeft: 5 }]} onPress={() => setJm(true)} >
+                  <Pressable style={[styles.button, styles.buttonOpen, { marginLeft: 5, width: '48%' }]} onPress={() => setJm(true)} >
                     <Text style={styles.textStyle} >Pilih Jam</Text>
                   </Pressable>
                 </View>
-                <Pressable style={[styles.button, styles.buttonOpen, { marginTop: 5 }]} onPress={handleLokasi} >
+                <Pressable style={[styles.button, styles.buttonOpen, { marginTop: 5, width: '100%' }]} onPress={handleLokasi} >
                   <Text style={styles.textStyle} >Gunakan Lokasi Sekarang</Text>
                 </Pressable>
                 <Pressable
