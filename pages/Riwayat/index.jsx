@@ -22,14 +22,14 @@ import { Ionicons, Feather, Fontisto } from "@expo/vector-icons";
 import CardLayanan from "../../component/CardLayanan";
 import * as Location from "expo-location";
 import { Link } from "@react-navigation/native";
-import { getBarber, me } from "../../utils/redux/actions";
+import { getBarber, me, riwayat } from "../../utils/redux/actions";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { base_url } from "../../utils/helper";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 
-function Barber({ navigation }) {
+function Riwayat({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState([]);
 
@@ -60,8 +60,8 @@ function Barber({ navigation }) {
   };
 
   useEffect(() => {
-    dispatch(getBarber()).then((res) => {
-      setData(res.data.data);
+    dispatch(riwayat(user.id)).then((res) => {
+      setData(res.data);
     });
   }, []);
 
@@ -91,130 +91,133 @@ function Barber({ navigation }) {
     <>
       <StatusBar />
       <SafeAreaView>
+
+        <View
+          style={[
+            {
+              width: "100%",
+              minHeight: 100,
+              backgroundColor: "pink",
+              borderBottomStartRadius: 15,
+              borderBottomEndRadius: 15,
+            },
+            styles.colCenter,
+          ]}
+        >
+          <View
+            style={[
+              styles.container,
+              {
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: 20,
+                justifyContent: "space-between",
+              },
+            ]}
+          >
+            <Pressable onPress={() => navigation.navigate("Dashboard")}>
+              <Ionicons name="arrow-back" size={30} color="black" />
+            </Pressable>
+            <Text style={[styles.heading, { color: "white" }]}>Riwayat Transaksi</Text>
+          </View>
+        </View>
         <ScrollView
           style={{
             backgroundColor: "white",
             width: width,
             minHeight: height,
+            
           }}
         >
           <View
-            style={[
-              {
-                width: "100%",
-                minHeight: 100,
-                backgroundColor: "pink",
-                borderBottomStartRadius: 15,
-                borderBottomEndRadius: 15,
-              },
-              styles.colCenter,
-            ]}
+            style={[styles.container, { paddingBottom: 10, marginBottom: 200 }]}
           >
-            <View
-              style={[
-                styles.container,
-                {
-                  display: "flex",
-                  flexDirection: "row",
-                  marginBottom: 20,
-                  justifyContent: "space-between",
-                },
-              ]}
-            >
-              <Pressable onPress={() => navigation.navigate("Dashboard")}>
-                <Ionicons name="arrow-back" size={30} color="black" />
-              </Pressable>
-              <Text style={[styles.heading, { color: "white" }]}>Barber</Text>
-            </View>
-          </View>
-          <View
-            style={[styles.container, { paddingBottom: 10, marginBottom: 20 }]}
-          >
+
             {data.length > 0
               ? data.map((e, i) => (
+                <View
+                  style={[
+                    {
+                      width: "100%",
+                      borderRadius: 20,
+                      height: 100,
+                      backgroundColor: "white",
+                      marginTop: 15,
+                    },
+                    styles.shadow,
+                  ]}
+                >
                   <View
                     style={[
                       {
-                        width: "100%",
-                        borderRadius: 20,
-                        height: 100,
-                        backgroundColor: "white",
-                        marginTop: 15,
+                        height: "100%",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: 15,
                       },
-                      styles.shadow,
                     ]}
                   >
                     <View
-                      style={[
-                        {
-                          height: "100%",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: 15,
-                        },
-                      ]}
+                      style={{
+                        height: "100%",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
                     >
                       <View
                         style={{
-                          height: "100%",
-                          flexDirection: "row",
+                          height: 70,
+                          width: 70,
+                          backgroundColor: "#6fffa9",
+                          justifyContent: "center",
+                          borderRadius: 10,
                           alignItems: "center",
                         }}
                       >
-                        <View
-                          style={{
-                            height: 70,
-                            width: 70,
-                            backgroundColor: "#6fffa9",
-                            justifyContent: "center",
-                            borderRadius: 10,
-                            alignItems: "center",
+                        <Image
+                          style={{ width: 70, height: 70, borderRadius: 10 }}
+                          source={{
+                            uri:
+                              base_url + "/images/" + e.profile,
                           }}
-                        >
-                          <Image
-                            style={{ width: 70, height: 70, borderRadius: 10 }}
-                            source={{
-                              uri:
-                                base_url + "/images/" + e.profile,
-                            }}
-                          />
-                        </View>
-                        <View
-                          style={[
-                            styles.colCenter,
-                            { marginLeft: 10, maxWidth: "60%" },
-                          ]}
-                        >
-                          <Text style={[styles.heading, { fontSize: 18 }]}>
-                            {e.nama_barber}
-                          </Text>
-                          <Text style={[styles.heading, { fontSize: 14 }]}>
-                            {e.nama}
-                          </Text>
-                        </View>
+                        />
                       </View>
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate("Home", {
-                            id: e.id,
-                          })
-                        }
+                      <View
                         style={[
-                          styles.rowCenter,
-                          {
-                            height: 70,
-                            width: 70,
-                            backgroundColor: "#6fffa9",
-                            borderRadius: 10,
-                          },
+                          styles.colCenter,
+                          { marginLeft: 10, maxWidth: "60%" },
                         ]}
                       >
-                        <Feather name="arrow-right" size={50} color="white" />
-                      </TouchableOpacity>
+                        <Text style={[styles.heading, { fontSize: 18 }]}>
+                          {e?.servis?.nama_servis}
+                        </Text>
+                        <Text style={[styles.heading, { fontSize: 14 }]}>
+                          {e?.barber?.nama_barber}
+                        </Text>
+                      </View>
                     </View>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("Detail", {
+                          id: e.id,
+                        })
+                      }
+                      style={[
+                        styles.rowCenter,
+                        {
+                          height: 70,
+                          width: 70,
+                          backgroundColor: "#6fffa9",
+                          borderRadius: 10,
+                        },
+                      ]}
+                    >
+                      <Feather name="arrow-right" size={50} color="white" />
+                    </TouchableOpacity>
                   </View>
-                ))
+                </View>
+              ))
               : null}
           </View>
         </ScrollView>
@@ -295,4 +298,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Barber;
+export default Riwayat;

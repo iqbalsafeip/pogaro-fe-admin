@@ -5,6 +5,7 @@ import Home from "./Home";
 import Login from "./Login";
 import Register from "./Register";
 import Reviews from "./Reviews";
+import Riwayat from "./Riwayat";
 
 export const authPages = [
   {
@@ -38,6 +39,10 @@ const pages = [
     name: "Barber",
     component: Barber,
   },
+  {
+    name : "Riwayat",
+    component: Riwayat
+  }
 ];
 
 export default pages;

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "skripsi-gina",
-    "slug": "skripsi-gina",
+    "name": "barber-user",
+    "slug": "barber-user",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

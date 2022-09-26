@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 
 const CardLayanan = (props) => {
   return (
@@ -35,8 +35,12 @@ const CardLayanan = (props) => {
               width: 70,
               backgroundColor: "#F9D9A8",
               borderRadius: 10,
+              justifyContent: "center",
+              alignItems :"center"
             }}
-          ></View>
+          >
+            <MaterialIcons name="home-repair-service" size={32} color="white" />
+          </View>
           <View style={[styles.colCenter, { marginLeft: 20 }]}>
             <Text style={[styles.heading, { fontSize: 18 }]}>
               {props?.nama_servis}

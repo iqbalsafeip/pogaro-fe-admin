@@ -271,7 +271,7 @@ function Dashboard({ navigation }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("Barber")}
+                    onPress={() => navigation.navigate("Riwayat")}
                     style={[
                       styles.rowCenter,
                       {

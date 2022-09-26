@@ -21,6 +21,8 @@ import MapView from "react-native-maps";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import CardLayanan from "../../component/CardLayanan";
 import * as Location from "expo-location";
+import { useDispatch } from "react-redux";
+import { getTransaksi } from "../../utils/redux/actions";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 
@@ -32,9 +34,12 @@ function Detail(props) {
     _tanggal: "",
   });
 
+  const dispatch = useDispatch()
+  const { id } = props.route.params
   const [isTanggal, setTgl] = useState(false);
   const [isJam, setJm] = useState(false);
   const [location, setLocation] = useState(null);
+  const [current ,setCurrent] = useState({})
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const handleDateChange = (event, date) => {
@@ -57,7 +62,19 @@ function Detail(props) {
   };
 
   useEffect(() => {
-    handleLokasi();
+    setLoading(true)
+    dispatch(getTransaksi(id))
+      .then(res => {
+        setCurrent(res.data)
+        setLoading(false)
+        alert(JSON.stringify(current))
+        // alert(JSON.stringify(res))
+      })
+      .catch(err => {
+        setLoading(false)
+        alert(JSON.stringify(err))
+      })
+      handleLokasi()
   }, []);
 
   const handleLokasi = async () => {
@@ -108,7 +125,7 @@ function Detail(props) {
                 },
               ]}
             >
-              <Pressable onPress={() => props.navigation.navigate("Barber")}>
+              <Pressable onPress={() => props.navigation.navigate("Riwayat")}>
                 <Ionicons name="arrow-back" size={30} color="black" />
               </Pressable>
               <Text style={[styles.heading, { color: "white" }]}>BARON</Text>
@@ -150,9 +167,9 @@ function Detail(props) {
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>
                 Alex Rudrigo
               </Text>
-              <Text>Tanggal Booking : {data._tanggal}</Text>
-              <Text>Jam Booking : {data.jam}</Text>
-              <Text>Status : Menunggu Konfirmasi</Text>
+              <Text>Tanggal Booking : {current.tanggal}</Text>
+              <Text>Jam Booking : {current.waktu}</Text>
+              <Text>Status : {current.status}</Text>
             </View>
             <View
               style={[
@@ -171,8 +188,8 @@ function Detail(props) {
               <MapView
                 style={{ width: "100%", height: 300 }}
                 initialRegion={{
-                  latitude: location?.coords.latitude,
-                  longitude: location?.coords.longitude,
+                  latitude: current.latitude,
+                  longitude: current.longitude,
                   latitudeDelta: 0.005,
                   longitudeDelta: 0.005,
                 }}
@@ -205,7 +222,7 @@ function Detail(props) {
                 borderRadius: 10,
               }}
             >
-              <Text>Jl. A Yani No 24</Text>
+              <Text>{current.detail_alamat}</Text>
             </View>
             <View
               style={{
@@ -244,15 +261,15 @@ function Detail(props) {
                 </Text>
                 <Text>Harga Jasa : </Text>
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Rp. 20.000
+                  Rp. {current?.servis?.harga_servis}
                 </Text>
                 <Text>Ongkos Transportasi Rp. 2000 /km : </Text>
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Rp. 8.000
+                  Rp. {current.ongkir}
                 </Text>
                 <Text>Total Bayar : </Text>
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Rp. 28.000
+                  Rp. {parseInt(current?.servis?.harga_servis) + parseInt(current.ongkir)}
                 </Text>
               </View>
             </View>

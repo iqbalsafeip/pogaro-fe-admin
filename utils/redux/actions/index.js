@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const base_url = "http://192.168.1.11:8000/api";
+import { base_url  as _burl} from "../../helper";
+const base_url = _burl + "/api";
 
 import { Storage } from "expo-storage";
 
@@ -73,6 +74,52 @@ export const getBarberId = (id) => (dispatch) => {
   return new Promise((resolve, reject) => {
     axios
       .get(base_url + "/barber/" + id)
+      .then((res) => {
+        console.log(res);
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+
+export const transaksi = (data) => (dispatch) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(base_url + "/transaksi", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(async (res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        alert(JSON.stringify(err.response));
+        reject(err);
+      });
+  });
+};
+
+export const getTransaksi = (id) => (dispatch) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(base_url + "/transaksi/" + id)
+      .then((res) => {
+        console.log(res);
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+export const riwayat = (id) => (dispatch) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(base_url + "/transaksi-riwayat/" + id)
       .then((res) => {
         console.log(res);
         resolve(res);

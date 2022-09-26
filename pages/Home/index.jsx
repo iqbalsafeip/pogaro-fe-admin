@@ -22,7 +22,9 @@ import CardLayanan from "../../component/CardLayanan";
 import * as Location from "expo-location";
 import { Link } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { getBarberId } from "../../utils/redux/actions";
+import { getBarberId, transaksi } from "../../utils/redux/actions";
+import { useSelector } from "react-redux";
+import { toFormData } from "../../utils/helper";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 
@@ -35,10 +37,12 @@ function Home(props) {
   });
   const dispatch = useDispatch();
   const [isTanggal, setTgl] = useState(false);
+  const [servis, setServis] = useState(null);
   const [isJam, setJm] = useState(false);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [detail_alamat, setDetail] = useState("")
   const [result, setRes] = useState({});
   const handleDateChange = (event, date) => {
     // setData({ date: date })
@@ -51,6 +55,8 @@ function Home(props) {
     });
     setTgl(false);
   };
+
+  const user = useSelector(state => state.mainReducer.user);
 
   const handleJam = (event, date) => {
     const current = date || data.tanggal;
@@ -85,9 +91,35 @@ function Home(props) {
   };
 
   const handleBooking = () => {
-    props.navigation.navigate("Detail");
+    const temp = {
+      barber_id : id,
+      pengguna_id : user.id,
+      tanggal : data.tanggal,
+      waktu: data.jam,
+      longitude: (location?.coords.longitude).toString(),
+      latitude: (location?.coords.latitude).toString(),
+      ongkir: "10000",
+      servis_id: servis,
+      status: 0,
+      detail_alamat: detail_alamat
+    }
+    alert(JSON.stringify(temp))
+    dispatch(transaksi(temp))
+      .then(res=> {
+        let data = res.data.data;
+        props.navigation.navigate("Detail", {id: data.id})
+      })
+      .catch(err => {
+        alert("gagal melakukan transaksi")
+      })
+    // props.navigation.navigate("Detail");
     setModalVisible(false);
   };
+
+  const handleServis = (id) => {
+    setServis(id)
+    setModalVisible(true);
+  }
 
   return (
     <>
@@ -246,6 +278,7 @@ function Home(props) {
                 <TextInput
                   multiline={true}
                   numberOfLines={4}
+                  value={detail_alamat}
                   style={{
                     borderWidth: 1,
                     marginHorizontal: 10,
@@ -254,6 +287,7 @@ function Home(props) {
                     padding: 5,
                   }}
                   placeholder="Masukan Alamat disini..."
+                  onChangeText={e => setDetail(e)}
                 />
                 <View style={[styles.rowCenter, { marginTop: 10 }]}>
                   <Pressable
@@ -317,7 +351,7 @@ function Home(props) {
                 <CardLayanan
                   {...e}
                   key={i}
-                  onBook={() => setModalVisible(true)}
+                  onBook={() => handleServis(e.id)}
                 />
               ))}
               {/* <CardLayanan onBook={() => setModalVisible(true)} /> */}

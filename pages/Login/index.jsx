@@ -11,6 +11,7 @@ import { toFormData } from "../../utils/helper";
 
 const Login = ({ navigation }) => {
   const dispatch = useDispatch();
+  const [isLoading, setLoading] = useState(false)
   const [isFocus, setIsFocus] = useState({
     password: false,
     email: false,
@@ -38,6 +39,7 @@ const Login = ({ navigation }) => {
   }
 
   const handleLogin = async () => {
+    setLoading(true)
     dispatch(
       login(
         toFormData({
@@ -47,9 +49,12 @@ const Login = ({ navigation }) => {
       )
     )
       .then((res) => {
+        setLoading(false)
         alert("login berhasil");
       })
       .catch((err) => {
+        setLoading(false)
+        alert(JSON.stringify(err));
         setPasswordMessage(err.response.data.message);
       });
   };
@@ -100,7 +105,7 @@ const Login = ({ navigation }) => {
     <AuthLayout
       navigation={navigation}
       title="Let's Sign You In"
-      subTitle="Welcome back, you've been missed"
+      subTitle="Selamat Datang, Silahkan Login untuk mengakses Aplikasi"
     >
       <View>
         <FormInput
@@ -136,7 +141,8 @@ const Login = ({ navigation }) => {
             emailMessage.length > 0 ||
             passwordMessage.length > 0 ||
             input.email.length < 1 ||
-            input.password.length < 1
+            input.password.length < 1 ||
+            isLoading
           }
           title="Sign In"
         ></Button>
