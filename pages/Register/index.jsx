@@ -1,24 +1,28 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, Button, TouchableOpacity} from 'react-native';
-import {AuthLayout, FormInput} from '../../component';
+import React, { useState, useEffect } from "react";
+import { View, Text, Button, TouchableOpacity } from "react-native";
+import { AuthLayout, FormInput } from "../../component";
 
-import colors from '../../constants';
-import {CrossIcon, CorrectIcon, EyeIcon, EyeCloseIcon} from '../../assets';
+import colors from "../../constants";
+import { CrossIcon, CorrectIcon, EyeIcon, EyeCloseIcon } from "../../assets";
+import { useDispatch } from "react-redux";
+import { register } from "../../utils/redux/actions";
+import { toFormData } from "../../utils/helper";
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [isFocus, setIsFocus] = useState({
     password: false,
     email: false,
     username: false,
   });
 
-  const [passwordMessage, setPasswordMessage] = useState('');
-  const [emailMessage, setEmailMessage] = useState('');
-  const [usernameMessage, setUsernameMessage] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [emailMessage, setEmailMessage] = useState("");
+  const [usernameMessage, setUsernameMessage] = useState("");
   const [input, setInput] = useState({
-    email: '',
-    username: '',
-    password: '',
+    email: "",
+    username: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -52,82 +56,101 @@ const Register = ({navigation}) => {
   useEffect(() => {
     if (isFocus.password) {
       if (input.password.length >= 9) {
-        setPasswordMessage('');
+        setPasswordMessage("");
       } else {
-        setPasswordMessage('password must be 9 characters');
+        setPasswordMessage("password must be 9 characters");
       }
     } else {
-      setPasswordMessage('');
+      setPasswordMessage("");
     }
 
     if (isFocus.email) {
       const cek = isValidEmail(input.email);
       if (cek) {
-        setEmailMessage('');
+        setEmailMessage("");
       } else {
-        setEmailMessage('Invalid Email');
+        setEmailMessage("Invalid Email");
       }
     } else {
       const cek = isValidEmail(input.email);
       if (cek) {
-        setEmailMessage('');
+        setEmailMessage("");
       } else {
-        setEmailMessage('Invalid Email');
+        setEmailMessage("Invalid Email");
       }
     }
 
     if (isFocus.username) {
       if (input.username.length >= 9) {
-        setUsernameMessage('');
+        setUsernameMessage("");
       } else {
-        setUsernameMessage('Username must be 9 characters');
+        setUsernameMessage("Username must be 9 characters");
       }
     } else {
-      setUsernameMessage('');
+      setUsernameMessage("");
     }
   }, [isFocus, input]);
+
+  const handleRegister = () => {
+    dispatch(
+      register(
+        toFormData({
+          email: input.email,
+          name: input.username,
+          password: input.password,
+          role: "user",
+        })
+      )
+    ).then((res) => {
+      alert("register berhasil");
+    });
+  };
 
   return (
     <AuthLayout
       navigation={navigation}
       title="Getting Started"
-      subTitle="Create an account to continue">
+      subTitle="Create an account to continue"
+    >
       <View>
         <FormInput
           value={input.email}
-          onChange={value => handleChange('email', value)}
-          onFocus={() => onFocus('email', true)}
-          onBlur={() => onBlur('email', false)}
+          onChange={(value) => handleChange("email", value)}
+          onFocus={() => onFocus("email", true)}
+          onBlur={() => onBlur("email", false)}
           label="Email"
-          errorMessage={emailMessage.length > 0 ? emailMessage : ''}
+          errorMessage={emailMessage.length > 0 ? emailMessage : ""}
           icon={emailMessage.length > 0 ? CrossIcon : CorrectIcon}
-          placeholder="Email Address"></FormInput>
+          placeholder="Email Address"
+        ></FormInput>
         <FormInput
           value={input.username}
-          onChange={value => handleChange('username', value)}
-          onFocus={() => onFocus('username', true)}
-          onBlur={() => onBlur('username', false)}
-          errorMessage={usernameMessage.length > 0 ? usernameMessage : ''}
+          onChange={(value) => handleChange("username", value)}
+          onFocus={() => onFocus("username", true)}
+          onBlur={() => onBlur("username", false)}
+          errorMessage={usernameMessage.length > 0 ? usernameMessage : ""}
           icon={usernameMessage.length > 0 ? CrossIcon : CorrectIcon}
           label="Username"
-          placeholder="Username"></FormInput>
+          placeholder="Username"
+        ></FormInput>
         <FormInput
           value={input.password}
-          onChange={value => handleChange('password', value)}
-          errorMessage={passwordMessage.length > 0 ? passwordMessage : ''}
-          onFocus={() => onFocus('password', true)}
-          onBlur={() => onBlur('password', false)}
+          onChange={(value) => handleChange("password", value)}
+          errorMessage={passwordMessage.length > 0 ? passwordMessage : ""}
+          onFocus={() => onFocus("password", true)}
+          onBlur={() => onBlur("password", false)}
           label="Password"
           icon={showPassword ? EyeCloseIcon : EyeIcon}
           onPressIcon={() => setShowPassword(!showPassword)}
           showPasswordState={showPassword}
           passwordInput
-          placeholder="Password"></FormInput>
+          placeholder="Password"
+        ></FormInput>
       </View>
 
-      <View style={{marginVertical: 10}}>
+      <View style={{ marginVertical: 10 }}>
         <Button
-          onPress={() => navigation.replace('Otp')}
+          onPress={handleRegister}
           color={colors.greenPrimary}
           disabled={
             emailMessage.length > 0 ||
@@ -137,28 +160,32 @@ const Register = ({navigation}) => {
             input.password.length < 1 ||
             input.username.length < 1
           }
-          title="Sign Up"></Button>
+          title="Sign Up"
+        ></Button>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.replace('Login')}
+        onPress={() => navigation.replace("Login")}
         style={{
           marginVertical: 5,
-          justifyContent: 'center',
-          flexDirection: 'row',
-        }}>
+          justifyContent: "center",
+          flexDirection: "row",
+        }}
+      >
         <Text
           style={{
             fontSize: 15,
             color: colors.border,
             marginRight: 5,
-          }}>
+          }}
+        >
           Already have an account?
         </Text>
         <Text
           style={{
             fontSize: 15,
             color: colors.greenPrimary,
-          }}>
+          }}
+        >
           Sign In
         </Text>
       </TouchableOpacity>
