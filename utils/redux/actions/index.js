@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { base_url  as _burl} from "../../helper";
+import { base_url as _burl } from "../../helper";
 const base_url = _burl + "/api";
 
 import { Storage } from "expo-storage";
@@ -28,6 +28,15 @@ export const login = (data) => (dispatch) => {
       });
   });
 };
+
+export const logout = (data) => (dispatch) => {
+  return new Promise((resolve, reject) => {
+    Storage.removeItem({ key: 'user' })
+    dispatch({ type: "SET_LOGIN", payload: false });
+    resolve(res);
+  });
+};
+
 export const register = (data) => (dispatch) => {
   return new Promise((resolve, reject) => {
     axios
@@ -50,6 +59,15 @@ export const register = (data) => (dispatch) => {
 export const me = () => async (dispatch) => {
   const item = JSON.parse(await Storage.getItem({ key: `user` }));
   if (item) {
+    axios
+      .get(base_url + "/users/" + item.id)
+      .then((res) => {
+        dispatch({ type: "SET_PROFILE", payload: res.data });
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
     dispatch({ type: "SET_USER", payload: item });
     dispatch({ type: "SET_LOGIN", payload: true });
   }
@@ -103,6 +121,42 @@ export const transaksi = (data) => (dispatch) => {
   });
 };
 
+export const uploadBukti = (data) => (dispatch) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(base_url + "/upload", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const verifikasi = (id, data) => (dispatch) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(base_url + "/verifikasi/" + id, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+
+
 export const getTransaksi = (id) => (dispatch) => {
   return new Promise((resolve, reject) => {
     axios
@@ -129,3 +183,18 @@ export const riwayat = (id) => (dispatch) => {
       });
   });
 };
+
+export const getMetodePembayaran = id => dispatch => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(base_url + "/metode-pembayaran/" + id)
+      .then((res) => {
+        console.log(res);
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  })
+}
+

@@ -2,6 +2,7 @@ const initialState = {
   test: "Lorem Ipsum",
   user: {},
   isLogin: false,
+  profile: {}
 };
 
 const mainReducer = (state = initialState, action) => {
@@ -21,6 +22,11 @@ const mainReducer = (state = initialState, action) => {
         ...state,
         isLogin: action.payload,
       };
+    case "SET_PROFILE":
+      return {
+        ...state,
+        profile: action.payload
+      }
     default:
       return state;
   }

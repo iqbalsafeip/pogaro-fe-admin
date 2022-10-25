@@ -104,8 +104,6 @@ const Login = ({ navigation }) => {
   return (
     <AuthLayout
       navigation={navigation}
-      title="Let's Sign You In"
-      subTitle="Selamat Datang, Silahkan Login untuk mengakses Aplikasi"
     >
       <View>
         <FormInput

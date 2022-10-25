@@ -18,30 +18,39 @@ import {
 } from "react-native";
 import DateTime from "@react-native-community/datetimepicker";
 import MapView from "react-native-maps";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons, AntDesign } from "@expo/vector-icons";
 import CardLayanan from "../../component/CardLayanan";
 import * as Location from "expo-location";
-import { useDispatch } from "react-redux";
-import { getTransaksi } from "../../utils/redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { getTransaksi, uploadBukti, verifikasi } from "../../utils/redux/actions";
+import * as DocumentPicker from 'expo-document-picker';
+import { base_url, toFormData } from "../../utils/helper";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 
 function Detail(props) {
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalLihat, setModalLihat] = useState(false)
   const [data, setData] = useState({
     tanggal: new Date(),
     jam: "",
     _tanggal: "",
   });
 
+  const user = useSelector(state => state.mainReducer.user)
+  const profile = useSelector(state => state.mainReducer.profile)
   const dispatch = useDispatch()
   const { id } = props.route.params
   const [isTanggal, setTgl] = useState(false);
   const [isJam, setJm] = useState(false);
   const [location, setLocation] = useState(null);
-  const [current ,setCurrent] = useState({})
+  const [current, setCurrent] = useState({})
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    file: "",
+    metode_pembayaran: ""
+  })
   const handleDateChange = (event, date) => {
     // setData({ date: date })
 
@@ -67,14 +76,12 @@ function Detail(props) {
       .then(res => {
         setCurrent(res.data)
         setLoading(false)
-        alert(JSON.stringify(current))
         // alert(JSON.stringify(res))
       })
       .catch(err => {
         setLoading(false)
-        alert(JSON.stringify(err))
       })
-      handleLokasi()
+    handleLokasi()
   }, []);
 
   const handleLokasi = async () => {
@@ -94,6 +101,70 @@ function Detail(props) {
     setLocation(location);
   };
 
+  const handleUpload = () => {
+    const temp = {
+      barber_id: current?.barber?.id,
+      metode_id: form.metode_pembayaran,
+      pengguna_id: profile?.id,
+      transaksi_id: current.id,
+      dokumen: {
+        ...form.file,
+        type: form.file.mimeType
+      }
+    }
+
+    dispatch(uploadBukti(toFormData(temp)))
+      .then(res => {
+        dispatch(getTransaksi(id))
+          .then(res => {
+            setCurrent(res.data)
+            setLoading(false)
+            // alert(JSON.stringify(res))
+          })
+          .catch(err => {
+            setLoading(false)
+          })
+      })
+  }
+
+  const handleVerifikasi = (status) => {
+    dispatch(verifikasi(current?.id, toFormData({ status: status })))
+      .then(res => {
+        dispatch(getTransaksi(id))
+          .then(res => {
+            setCurrent(res.data)
+            setLoading(false)
+            alert("Berhasil Memverifikasi Transaksi")
+            // alert(JSON.stringify(res))
+          })
+          .catch(err => {
+            setLoading(false)
+            alert(JSON.stringify(err))
+          })
+      })
+  }
+
+  const handleSelect = (id) => {
+    setForm(e => ({ ...form, metode_pembayaran: id }));
+  }
+
+  const handleDokumen = async () => {
+    const doc = await DocumentPicker.getDocumentAsync();
+    alert(JSON.stringify(doc))
+    setForm(e => ({ ...form, file: doc }));
+  }
+
+  const getStatus = (status) => {
+    switch (status) {
+      case 0: return 'Belum Dibayar';
+      case 1: return 'Konfirmasi Pembayaran';
+      case 2: return 'Telah Dibayar';
+      case 3: return 'Diproses';
+      case 4: return 'Selesai';
+      case 5: return 'Dibatalkan';
+    }
+  }
+
   return (
     <>
       <StatusBar />
@@ -110,7 +181,7 @@ function Detail(props) {
               {
                 width: "100%",
                 minHeight: 60,
-                backgroundColor: "pink",
+                backgroundColor: "green",
               },
               styles.colCenter,
             ]}
@@ -126,24 +197,22 @@ function Detail(props) {
               ]}
             >
               <Pressable onPress={() => props.navigation.navigate("Riwayat")}>
-                <Ionicons name="arrow-back" size={30} color="black" />
+                <Ionicons name="arrow-back" size={30} color="white" />
               </Pressable>
-              <Text style={[styles.heading, { color: "white" }]}>BARON</Text>
+              <Text style={[styles.heading, { color: "white" }]}>POGARO</Text>
             </View>
           </View>
           <View
             style={[
               {
-                borderBottomStartRadius: 25,
-                borderBottomEndRadius: 25,
-                backgroundColor: "pink",
+                backgroundColor: "green",
                 width: "100%",
                 paddingVertical: 20,
               },
             ]}
           >
             <View style={styles.container}>
-              <Text style={[styles.heading, { marginTop: 10 }]}>
+              <Text style={[styles.heading, { marginTop: 10, color: "white" }]}>
                 Detail Booking
               </Text>
             </View>
@@ -161,15 +230,15 @@ function Detail(props) {
             >
               <Text>Layanan yang dipesan : </Text>
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                Jasa Cukur
+                {current?.servis?.nama_servis}
               </Text>
-              <Text>Nama Pencukur : </Text>
+              <Text>Nama Fotografer : </Text>
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                Alex Rudrigo
+                {current?.barber?.nama} ({current?.barber?.nama_barber})
               </Text>
               <Text>Tanggal Booking : {current.tanggal}</Text>
               <Text>Jam Booking : {current.waktu}</Text>
-              <Text>Status : {current.status}</Text>
+              <Text>Status : {getStatus(parseInt(current.status))}</Text>
             </View>
             <View
               style={[
@@ -188,15 +257,21 @@ function Detail(props) {
               <MapView
                 style={{ width: "100%", height: 300 }}
                 initialRegion={{
-                  latitude: current.latitude,
-                  longitude: current.longitude,
+                  latitude: parseFloat(current?.latitude),
+                  longitude: parseFloat(current?.longitude),
                   latitudeDelta: 0.005,
                   longitudeDelta: 0.005,
                 }}
+
               >
                 <MapView.Marker
-                  coordinate={location?.coords}
-                  title={"Lokasi Kamu Sekarang"}
+                  coordinate={{
+                    latitude: parseFloat(current?.latitude),
+                    longitude: parseFloat(current?.longitude),
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                  }}
+                  title={"Lokasi Transaksi"}
                 />
               </MapView>
             )}
@@ -257,7 +332,7 @@ function Detail(props) {
               >
                 <Text>Layanan yang dipesan : </Text>
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Jasa Cukur
+                  {current?.servis?.nama_servis}
                 </Text>
                 <Text>Harga Jasa : </Text>
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
@@ -271,30 +346,239 @@ function Detail(props) {
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
                   Rp. {parseInt(current?.servis?.harga_servis) + parseInt(current.ongkir)}
                 </Text>
+                {current.status !== "5" ? !current?.bukti_pembayaran ? (
+                  <Pressable
+                    style={[
+                      styles.button,
+                      styles.buttonClose,
+                      ,
+                      { marginTop: 15, width: "100%", backgroundColor: "grey" },
+                    ]}
+                  >
+                    <Text style={styles.textStyle} onPress={() => setModalVisible(true)}>Upload Bukti Pembayaran</Text>
+                  </Pressable>
+                ) : (
+                  <Pressable
+                    style={[
+                      styles.button,
+                      styles.buttonClose,
+                      ,
+                      { marginTop: 15, width: "100%", backgroundColor: "grey" },
+                    ]}
+                  >
+                    <Text style={styles.textStyle} onPress={() => setModalLihat(true)}>Lihat Bukti Pembayaran</Text>
+                  </Pressable>
+                ) : null}
+
               </View>
             </View>
-            <Pressable
-              style={[styles.button, styles.buttonPrimary, { marginTop: 15 }]}
-              onPress={() => Linking.openURL("https://wa.me/62895801066893")}
-            >
-              <Text style={styles.textStyle}>Hubungi Pencukur</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.button, styles.buttonDanger, { marginTop: 15 }]}
-            >
-              <Text style={styles.textStyle}>Batalkan</Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.button,
-                styles.buttonClose,
-                ,
-                { marginTop: 15, width: "100%" },
-              ]}
-            >
-              <Text style={styles.textStyle}>Tandai Selesai</Text>
-            </Pressable>
+            {
+              current.status !== "5" ? (
+                <React.Fragment>
+                  <Pressable
+                    style={[styles.button, styles.buttonPrimary, { marginTop: 15 }]}
+                    onPress={() => Linking.openURL("https://wa.me/" + current?.barber?.no_hp)}
+                  >
+                    <Text style={styles.textStyle}>Hubungi Fotografer</Text>
+                  </Pressable>
+                  {
+                    !["3", "4"].includes(current.status) && (
+                      <Pressable
+                        onPress={() => handleVerifikasi(5)}
+                        style={[styles.button, styles.buttonDanger, { marginTop: 15 }]}
+                      >
+                        <Text style={styles.textStyle}>Batalkan</Text>
+                      </Pressable>
+                    )
+                  }
+
+                </React.Fragment>
+              ) : null
+            }
+
+            {current?.status == 3 && (
+              <Pressable
+                onPress={() => handleVerifikasi(4)}
+                style={[
+                  styles.button,
+                  styles.buttonClose,
+                  ,
+                  { marginTop: 15, width: "100%" },
+                ]}
+              >
+                <Text style={styles.textStyle}>Tandai Selesai</Text>
+              </Pressable>
+            )}
+
           </View>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={[styles.heading, { fontSize: 16 }]}>Upload Bukti Pembayaran</Text>
+                <View style={{ width: "100%", borderBottomWidth: 2, borderColor: "black", marginTop: 4 }} />
+                <Text style={[styles.heading, { fontSize: 12 }]}>{form.file?.name}</Text>
+                <TouchableOpacity
+                  onPress={handleDokumen}
+                  style={[
+                    styles.rowCenter,
+                    {
+                      height: 40,
+                      width: "100%",
+                      backgroundColor: "green",
+                      borderRadius: 10,
+                      marginTop: 10,
+                    },
+                    styles.shadow
+                  ]}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold", marginRight: 10 }} >Pilih Dokumen</Text>
+                  <AntDesign name="pluscircle" size={18} color="white" />
+                </TouchableOpacity>
+                {
+                  current.metode_pembayaran?.map(e => (
+                    <TouchableOpacity
+                      onPress={() => handleSelect(e.id)}
+                      style={[
+                        {
+                          width: "100%",
+                          borderRadius: 20,
+                          height: 100,
+                          backgroundColor: form.metode_pembayaran === e.id ? "#c4c4c4" : "white",
+                          marginTop: 15,
+                        },
+                        styles.shadow,
+
+                      ]}
+                    >
+                      <View
+                        style={[
+                          {
+                            height: "100%",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: 15,
+                          },
+                        ]}
+                      >
+                        <View
+                          style={{
+                            height: "100%",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <View
+                            style={{
+                              height: 70,
+                              width: 70,
+                              backgroundColor: "#6fffa9",
+                              justifyContent: "center",
+                              borderRadius: 10,
+                              alignItems: "center",
+                            }}
+                          >
+                            <MaterialIcons name="home-repair-service" size={32} color="white" />
+                          </View>
+                          <View
+                            style={[
+                              styles.colCenter,
+                              { marginLeft: 10, maxWidth: "60%" },
+                            ]}
+                          >
+                            <Text style={[styles.heading, { fontSize: 18 }]}>
+                              {e.nama_metode}
+                            </Text>
+                            <Text style={[styles.heading, { fontSize: 14 }]}>
+                              Tujuan : {e.nomor_tujuan}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    </TouchableOpacity >
+                  ))
+                }
+                <TouchableOpacity
+                  onPress={handleUpload}
+                  style={[
+                    styles.rowCenter,
+                    {
+                      height: 40,
+                      width: "100%",
+                      backgroundColor: "green",
+                      borderRadius: 10,
+                      marginTop: 10,
+                    },
+                    styles.shadow
+                  ]}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold", marginRight: 10 }} >Upload</Text>
+                  <AntDesign name="pluscircle" size={18} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  style={[
+                    styles.rowCenter,
+                    {
+                      height: 40,
+                      width: "100%",
+                      backgroundColor: "red",
+                      borderRadius: 10,
+                      marginTop: 10,
+                    },
+                    styles.shadow
+                  ]}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold", marginRight: 10 }} >Batal</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalLihat}
+            onRequestClose={() => {
+              setModalLihat(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={[styles.heading, { fontSize: 16 }]}>Lihat Bukti Pembayaran</Text>
+                <Image
+                  style={{ width: 250, height: 250, borderRadius: 10, aspectRatio: 0.8 }}
+                  source={{
+                    uri:
+                      base_url + "/bukti/" + current?.bukti_pembayaran?.dokumen,
+                  }}
+                />
+
+                <TouchableOpacity
+                  onPress={() => setModalLihat(false)}
+                  style={[
+                    styles.rowCenter,
+                    {
+                      height: 40,
+                      width: "100%",
+                      backgroundColor: "red",
+                      borderRadius: 10,
+                      marginTop: 10,
+                    },
+                    styles.shadow
+                  ]}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold", marginRight: 10 }} >Batal</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       </SafeAreaView>
     </>

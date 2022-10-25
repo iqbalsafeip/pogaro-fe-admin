@@ -103,9 +103,7 @@ function Barber({ navigation }) {
               {
                 width: "100%",
                 minHeight: 100,
-                backgroundColor: "pink",
-                borderBottomStartRadius: 15,
-                borderBottomEndRadius: 15,
+                backgroundColor: "green",
               },
               styles.colCenter,
             ]}
@@ -124,7 +122,7 @@ function Barber({ navigation }) {
               <Pressable onPress={() => navigation.navigate("Dashboard")}>
                 <Ionicons name="arrow-back" size={30} color="black" />
               </Pressable>
-              <Text style={[styles.heading, { color: "white" }]}>Barber</Text>
+              <Text style={[styles.heading, { color: "white" }]}>Jasa Fotografer</Text>
             </View>
           </View>
           <View

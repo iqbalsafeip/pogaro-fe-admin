@@ -104,9 +104,7 @@ function Dashboard({ navigation }) {
               {
                 width: "100%",
                 minHeight: 100,
-                backgroundColor: "pink",
-                borderBottomStartRadius: 15,
-                borderBottomEndRadius: 15,
+                backgroundColor: "green",
               },
               styles.colCenter,
             ]}
@@ -122,31 +120,28 @@ function Dashboard({ navigation }) {
                 },
               ]}
             >
-              <Text style={[styles.heading, { color: "white" }]}>BARON</Text>
-              <Ionicons name="person-circle" size={32} color="black" />
+              <Text style={[styles.heading, { color: "white" }]}>POGARO</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Profile")}
+                style={[
+                  styles.rowCenter,
+                  {
+                    height: 50,
+                    width: 50,
+                    backgroundColor: "white",
+                    borderRadius: 25,
+                  },
+                ]}
+              >
+                <Ionicons name="person-circle" size={32} color="black" />
+              </TouchableOpacity>
+
             </View>
           </View>
           <View
             style={[styles.container, { paddingBottom: 10, marginBottom: 20 }]}
           >
-            <View
-              style={[
-                {
-                  width: "100%",
-                  backgroundColor: "white",
-                  minHeight: 80,
-                  marginTop: 10,
-                  borderRadius: 10,
-                  padding: 20,
-                },
-                styles.shadow,
-              ]}
-            >
-              <Text style={{ color: "black" }}>Halo, Selamat Datang</Text>
-              <Text style={[styles.heading, { color: "black" }]}>
-                {user?.name}
-              </Text>
-            </View>
+            
             <View>
               <View
                 style={[
@@ -188,7 +183,7 @@ function Dashboard({ navigation }) {
                         alignItems: "center",
                       }}
                     >
-                      <Fontisto name="scissors" size={28} color="black" />
+                      <Fontisto name="camera" size={28} color="black" />
                     </View>
                     <View
                       style={[
@@ -197,7 +192,7 @@ function Dashboard({ navigation }) {
                       ]}
                     >
                       <Text style={[styles.heading, { fontSize: 18 }]}>
-                        Lihat Barber Tersedia
+                        Lihat Jasa Forografer
                       </Text>
                     </View>
                   </View>

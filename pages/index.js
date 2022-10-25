@@ -3,6 +3,7 @@ import Dashboard from "./Dashboard";
 import Detail from "./Detail";
 import Home from "./Home";
 import Login from "./Login";
+import Profile from "./Profile";
 import Register from "./Register";
 import Reviews from "./Reviews";
 import Riwayat from "./Riwayat";
@@ -42,6 +43,10 @@ const pages = [
   {
     name : "Riwayat",
     component: Riwayat
+  },
+  {
+    name: "Profile",
+    component: Profile
   }
 ];
 

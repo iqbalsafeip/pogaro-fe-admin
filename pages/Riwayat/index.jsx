@@ -25,7 +25,7 @@ import { Link } from "@react-navigation/native";
 import { getBarber, me, riwayat } from "../../utils/redux/actions";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { base_url } from "../../utils/helper";
+import { base_url, getStatus, getStatusColor } from "../../utils/helper";
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 
@@ -35,6 +35,7 @@ function Riwayat({ navigation }) {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.mainReducer.user);
+  const profile = useSelector(state => state.mainReducer.profile)
   const [isTanggal, setTgl] = useState(false);
   const [isJam, setJm] = useState(false);
   const [location, setLocation] = useState(null);
@@ -60,7 +61,7 @@ function Riwayat({ navigation }) {
   };
 
   useEffect(() => {
-    dispatch(riwayat(user.id)).then((res) => {
+    dispatch(riwayat(profile.id)).then((res) => {
       setData(res.data);
     });
   }, []);
@@ -97,9 +98,7 @@ function Riwayat({ navigation }) {
             {
               width: "100%",
               minHeight: 100,
-              backgroundColor: "pink",
-              borderBottomStartRadius: 15,
-              borderBottomEndRadius: 15,
+              backgroundColor: "green",
             },
             styles.colCenter,
           ]}
@@ -116,7 +115,7 @@ function Riwayat({ navigation }) {
             ]}
           >
             <Pressable onPress={() => navigation.navigate("Dashboard")}>
-              <Ionicons name="arrow-back" size={30} color="black" />
+              <Ionicons name="arrow-back" size={30} color="white" />
             </Pressable>
             <Text style={[styles.heading, { color: "white" }]}>Riwayat Transaksi</Text>
           </View>
@@ -169,19 +168,13 @@ function Riwayat({ navigation }) {
                         style={{
                           height: 70,
                           width: 70,
-                          backgroundColor: "#6fffa9",
+                          backgroundColor: getStatusColor(parseInt(e.status)),
                           justifyContent: "center",
                           borderRadius: 10,
                           alignItems: "center",
                         }}
                       >
-                        <Image
-                          style={{ width: 70, height: 70, borderRadius: 10 }}
-                          source={{
-                            uri:
-                              base_url + "/images/" + e.profile,
-                          }}
-                        />
+                        <Fontisto name="history" size={28} color="white" />
                       </View>
                       <View
                         style={[
@@ -189,11 +182,14 @@ function Riwayat({ navigation }) {
                           { marginLeft: 10, maxWidth: "60%" },
                         ]}
                       >
-                        <Text style={[styles.heading, { fontSize: 18 }]}>
+                        <Text style={[styles.heading, { fontSize: 16 }]}>
                           {e?.servis?.nama_servis}
                         </Text>
                         <Text style={[styles.heading, { fontSize: 14 }]}>
                           {e?.barber?.nama_barber}
+                        </Text>
+                        <Text style={[styles.heading, { fontSize: 8, color: getStatusColor(parseInt(e.status)) }]}>
+                          {getStatus(parseInt(e.status))}
                         </Text>
                       </View>
                     </View>
